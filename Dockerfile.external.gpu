@@ -11,7 +11,10 @@ RUN apt-get update && \
     apt-get install -y python3.11 python3.11-venv python3-pip && \
     ln -sf /usr/bin/python3.11 /usr/bin/python3 && \
     python3 --version
-
+# Install libGL
+RUN apt-get update && apt-get install -y libgl1
+# Install git
+RUN apt-get update && apt-get install -y git
 # Install poetry
 RUN pip install pipx
 RUN python3 -m pipx ensurepath
@@ -31,6 +34,8 @@ RUN poetry install --extras "ui vector-stores-qdrant llms-ollama embeddings-olla
 
 FROM base as app
 
+ENV RUN_CMD="make run"
+
 ENV PYTHONUNBUFFERED=1
 ENV PORT=8080
 EXPOSE 8080
@@ -47,8 +52,8 @@ COPY --chown=worker fern/ fern
 COPY --chown=worker *.yaml *.md ./
 COPY --chown=worker scripts/ scripts
 COPY --chown=worker pyproject.toml poetry.lock ./
+COPY --chown=worker docbase/ docbase
 COPY --chown=worker Makefile ./
 
 ENV PYTHONPATH="$PYTHONPATH:/private_gpt/"
-
-ENTRYPOINT make run
+ENTRYPOINT make ${RUN_CMD}

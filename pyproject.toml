@@ -40,7 +40,6 @@ llama-index-storage-index-store-postgres = {version ="^0.1.4", optional = true}
 
 # Ingestion
 llama-index-readers-pdf-marker = { git = "https://github.com/NathanLenas/llama_index.git", branch = "marker-file-processing-dev-fix",  subdirectory = "llama-index-integrations/readers/llama-index-readers-pdf-marker"}
-surya-ocr = "0.4.12"
 # Postgres
 psycopg2-binary = {version ="^2.9.9", optional = true}
 asyncpg = {version="^0.29.0", optional = true}

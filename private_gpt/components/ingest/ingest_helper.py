@@ -76,6 +76,8 @@ class IngestionHelper:
         for document in documents:
             document.metadata.update(file_metadata or {})
             document.metadata["file_name"] = file_name
+            document.metadata["extension"] = Path(file_name).suffix
+
 
         IngestionHelper._exclude_metadata(documents)
         return documents

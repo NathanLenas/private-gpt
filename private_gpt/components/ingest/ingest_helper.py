@@ -27,12 +27,13 @@ def _try_loading_included_file_formats() -> dict[str, type[BaseReader]]:
         from llama_index.readers.file.video_audio import (  # type: ignore
             VideoAudioReader,
         )
+        from llama_index.readers.pdf_marker import PDFMarkerReader
     except ImportError as e:
         raise ImportError("`llama-index-readers-file` package not found") from e
 
     default_file_reader_cls: dict[str, type[BaseReader]] = {
         ".hwp": HWPReader,
-        ".pdf": PDFReader,
+        ".pdf": PDFMarkerReader,
         ".docx": DocxReader,
         ".pptx": PptxReader,
         ".ppt": PptxReader,
@@ -69,12 +70,14 @@ class IngestionHelper:
 
     @staticmethod
     def transform_file_into_documents(
-        file_name: str, file_data: Path
+        file_name: str, file_data: Path, file_metadata: dict[str, str] | None = None
     ) -> list[Document]:
         documents = IngestionHelper._load_file_to_documents(file_name, file_data)
         for document in documents:
+            document.metadata.update(file_metadata or {})
             document.metadata["file_name"] = file_name
             document.metadata["extension"] = Path(file_name).suffix
+
 
         IngestionHelper._exclude_metadata(documents)
         return documents

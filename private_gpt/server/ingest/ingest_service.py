@@ -22,7 +22,7 @@ if TYPE_CHECKING:
     from llama_index.core.storage.docstore.types import RefDocInfo
 
 logger = logging.getLogger(__name__)
-
+logger.setLevel(logging.DEBUG)
 
 @singleton
 class IngestService:
@@ -63,14 +63,17 @@ class IngestService:
         with tempfile.NamedTemporaryFile(delete=False) as tmp:
             try:
                 path_to_tmp = Path(tmp.name)
+                logger.debug("Writing file data to tmp file=%s", path_to_tmp)
                 if isinstance(file_data, bytes):
                     path_to_tmp.write_bytes(file_data)
+                    logger.debug("Wrote byte data to tmp file=%s", path_to_tmp)
                 else:
                     path_to_tmp.write_text(str(file_data))
+                    logger.debug("Wrote text data to tmp file=%s", path_to_tmp)
                 return self.ingest_file(file_name, path_to_tmp, file_metadata)
             finally:
                 tmp.close()
-                path_to_tmp.unlink()
+                path_to_tmp.unlink(True)
 
     def ingest_file(
         self,

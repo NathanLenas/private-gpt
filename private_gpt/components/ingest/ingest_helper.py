@@ -105,6 +105,6 @@ class IngestionHelper:
         for document in documents:
             document.metadata["doc_id"] = document.doc_id
             # We don't want the Embeddings search to receive this metadata
-            document.excluded_embed_metadata_keys = ["doc_id"]
+            document.excluded_embed_metadata_keys = ["doc_id", "title", "extension"]
             # We don't want the LLM to receive these metadata in the context
-            document.excluded_llm_metadata_keys = ["file_name", "doc_id", "page_label"]
+            document.excluded_llm_metadata_keys = ["file_name", "doc_id", "page_label", "title", "category", "priority", "extension"]

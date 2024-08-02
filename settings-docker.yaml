@@ -10,9 +10,7 @@ llm:
   temperature: ${PGPT_OLLAMA_TEMPERATURE:0.1}     
 
 embedding:
-
-  mode: ${PGPT_EMBED_MODE:mock}
-  mode: ${PGPT_LLM_MODE:ollama}
+  mode: ${PGPT_EMBED_MODE:ollama}
   tokenizer: ${PGPT_LLM_TOKENIZER:mistralai/Mistral-7B-Instruct-v0.2}
   max_new_tokens: ${PGPT_OLLAMA_MAX_NEW_TOKENS:512}
   context_window: ${PGPT_OLLAMA_CONTEXT_WINDOW:3900}

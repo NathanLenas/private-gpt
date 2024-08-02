@@ -107,7 +107,8 @@ milvus:
   overwrite: false
 
 qdrant:
-  path: local_data/private_gpt/qdrant
+  location: http://qdrant:6333
+  # path: local_data/private_gpt/qdrant
 
 postgres:
   host: localhost

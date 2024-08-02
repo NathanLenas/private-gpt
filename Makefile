@@ -54,6 +54,13 @@ ingest:
 stats:
 	poetry run python scripts/utils.py stats
 
+ingestdocbase: 
+	@poetry run python scripts/ingest_folder.py ./docbase/default
+	
+wipeingestrun: wipe ingestdocbase run
+
+wiperun: wipe run
+
 wipe:
 	poetry run python scripts/utils.py wipe
 

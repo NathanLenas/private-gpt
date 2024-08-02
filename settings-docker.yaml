@@ -3,17 +3,31 @@ server:
   port: ${PORT:8080}
 
 llm:
-  mode: ${PGPT_MODE:mock}
+  mode: ${PGPT_LLM_MODE:ollama}
+  tokenizer: ${PGPT_LLM_TOKENIZER:mistralai/Mistral-7B-Instruct-v0.2}
+  max_new_tokens: ${PGPT_OLLAMA_MAX_NEW_TOKENS:512}
+  context_window: ${PGPT_OLLAMA_CONTEXT_WINDOW:3900}
+  temperature: ${PGPT_OLLAMA_TEMPERATURE:0.1}     
 
 embedding:
+
   mode: ${PGPT_EMBED_MODE:mock}
+  mode: ${PGPT_LLM_MODE:ollama}
+  tokenizer: ${PGPT_LLM_TOKENIZER:mistralai/Mistral-7B-Instruct-v0.2}
+  max_new_tokens: ${PGPT_OLLAMA_MAX_NEW_TOKENS:512}
+  context_window: ${PGPT_OLLAMA_CONTEXT_WINDOW:3900}
+  temperature: ${PGPT_OLLAMA_TEMPERATURE:0.1} 
+
 
 llamacpp:
   llm_hf_repo_id: ${PGPT_HF_REPO_ID:lmstudio-community/Meta-Llama-3.1-8B-Instruct-GGUF}
   llm_hf_model_file: ${PGPT_HF_MODEL_FILE:Meta-Llama-3.1-8B-Instruct-Q4_K_M.gguf}
 
 huggingface:
+
   embedding_hf_model_name: ${PGPT_EMBEDDING_HF_MODEL_NAME:nomic-ai/nomic-embed-text-v1.5}
+  api_key: ${HF_TOKEN:}
+
 
 sagemaker:
   llm_endpoint_name: ${PGPT_SAGEMAKER_LLM_ENDPOINT_NAME:}
@@ -22,15 +36,26 @@ sagemaker:
 ollama:
   llm_model: ${PGPT_OLLAMA_LLM_MODEL:llama3.1}
   embedding_model: ${PGPT_OLLAMA_EMBEDDING_MODEL:nomic-embed-text}
-  api_base: ${PGPT_OLLAMA_API_BASE:http://ollama:11434}
-  embedding_api_base: ${PGPT_OLLAMA_EMBEDDING_API_BASE:http://ollama:11434}
+  api_base: ${PGPT_OLLAMA_API_BASE:http://ollama:11435}
+  embedding_api_base: ${PGPT_OLLAMA_EMBEDDING_API_BASE:http://ollama:11435}
   tfs_z: ${PGPT_OLLAMA_TFS_Z:1.0}
   top_k: ${PGPT_OLLAMA_TOP_K:40}
   top_p: ${PGPT_OLLAMA_TOP_P:0.9}
   repeat_last_n: ${PGPT_OLLAMA_REPEAT_LAST_N:64}
   repeat_penalty: ${PGPT_OLLAMA_REPEAT_PENALTY:1.2}
   request_timeout: ${PGPT_OLLAMA_REQUEST_TIMEOUT:600.0}
+
   autopull_models: ${PGPT_OLLAMA_AUTOPULL_MODELS:true}
+
+
+  
+rag:
+  similarity_top_k: ${PGPT_RAG_TOP_K:1}
+  similarity_value: ${PGPT_RAG_SIMILARITY_VALUE:0.45}
+  rerank:
+    enabled: ${PGPT_RAG_RERANK:false}
+    model: ${PGPT_RAG_RERANK_MODEL:cross-encoder/ms-marco-MiniLM-L-2-v2}
+    top_n: ${PGPT_RAG_RERANK_TOP_N:1}
 
 ui:
   enabled: true

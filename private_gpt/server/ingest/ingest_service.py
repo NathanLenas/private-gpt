@@ -4,7 +4,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING, AnyStr, BinaryIO
 
 from injector import inject, singleton
-from llama_index.core.node_parser import SentenceWindowNodeParser
+from private_gpt.server.ingest.custom_node_parser import CustomNodeParser
 from llama_index.core.storage import StorageContext
 
 from private_gpt.components.embedding.embedding_component import EmbeddingComponent
@@ -39,7 +39,7 @@ class IngestService:
             docstore=node_store_component.doc_store,
             index_store=node_store_component.index_store,
         )
-        node_parser = SentenceWindowNodeParser.from_defaults()
+        node_parser = CustomNodeParser.from_defaults()
 
         self.ingest_component = get_ingestion_component(
             self.storage_context,

@@ -54,4 +54,5 @@ def load_active_settings() -> dict[str, Any]:
         load_settings_from_profile(profile) for profile in active_profiles
     ]
     merged: dict[str, Any] = merge_settings(loaded_profiles)
+    logger.info(str(merged))
     return merged

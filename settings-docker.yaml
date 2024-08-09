@@ -3,10 +3,14 @@ server:
   port: ${PORT:8080}
 
 llm:
-  mode: ${PGPT_MODE:mock}
+  mode: ${PGPT_LLM_MODE:ollama}
+  max_new_tokens: ${PGPT_OLLAMA_MAX_NEW_TOKENS:512}
+  context_window: ${PGPT_OLLAMA_CONTEXT_WINDOW:3900}
+  temperature: ${PGPT_OLLAMA_TEMPERATURE:0.1}   
 
 embedding:
-  mode: ${PGPT_EMBED_MODE:mock}
+  mode: ${PGPT_EMBED_MODE:ollama}
+
 
 llamacpp:
   llm_hf_repo_id: ${PGPT_HF_REPO_ID:lmstudio-community/Meta-Llama-3.1-8B-Instruct-GGUF}
@@ -31,6 +35,16 @@ ollama:
   repeat_penalty: ${PGPT_OLLAMA_REPEAT_PENALTY:1.2}
   request_timeout: ${PGPT_OLLAMA_REQUEST_TIMEOUT:600.0}
   autopull_models: ${PGPT_OLLAMA_AUTOPULL_MODELS:true}
+
+rag:
+  similarity_top_k:  ${PGPT_RAG_SIMILARITY_TOP_K:4}
+  #This value controls how many "top" documents the RAG returns to use in the context.
+  #similarity_value: 0.45
+  #This value is disabled by default.  If you enable this settings, the RAG will only use articles that meet a certain percentage score.
+  rerank:
+    enabled: ${PGPT_RAG_RERANK:true}
+    model: ${PGPT_RAG_RERANK_MODEL:cross-encoder/ms-marco-MiniLM-L-2-v2}
+    top_n: ${PGPT_RAG_RERANK_TOP_N:1}
 
 ui:
   enabled: true

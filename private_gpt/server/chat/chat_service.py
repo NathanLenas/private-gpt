@@ -24,7 +24,9 @@ from private_gpt.components.vector_store.vector_store_component import (
 )
 from private_gpt.open_ai.extensions.context_filter import ContextFilter
 from private_gpt.server.chunks.chunks_service import Chunk
+from private_gpt.server.ingest.model import IngestedDoc
 from private_gpt.settings.settings import Settings
+from llama_index.core.storage.docstore.types import RefDocInfo
 
 
 class Completion(BaseModel):
@@ -35,6 +37,7 @@ class Completion(BaseModel):
 class CompletionGen(BaseModel):
     response: TokenGen
     sources: list[Chunk] | None = None
+    
 
 
 @dataclass
@@ -100,6 +103,30 @@ class ChatService:
             embed_model=embedding_component.embedding_model,
             show_progress=True,
         )
+        
+    def list_ingested(self) -> list[IngestedDoc]:
+        ingested_docs: list[IngestedDoc] = []
+        try:
+            docstore = self.storage_context.docstore
+            ref_docs: dict[str, RefDocInfo] | None = docstore.get_all_ref_doc_info()
+
+            if not ref_docs:
+                return ingested_docs
+
+            for doc_id, ref_doc_info in ref_docs.items():
+                doc_metadata = None
+                if ref_doc_info is not None and ref_doc_info.metadata is not None:
+                    doc_metadata = IngestedDoc.curate_metadata(ref_doc_info.metadata)
+                ingested_docs.append(
+                    IngestedDoc(
+                        object="ingest.document",
+                        doc_id=doc_id,
+                        doc_metadata=doc_metadata,
+                    )
+                )
+        except ValueError:
+            pass
+        return ingested_docs
 
     def _chat_engine(
         self,
@@ -109,6 +136,29 @@ class ChatService:
     ) -> BaseChatEngine:
         settings = self.settings
         if use_context:
+            if context_filter:
+                if context_filter.docs_categories and context_filter.docs_priorities:
+                    ingested = self.list_ingested()
+                    for cat in context_filter.docs_categories:
+                        for prio in context_filter.docs_priorities:
+                            for doc in ingested:
+                                if str(doc.doc_metadata.get('category')) == str(cat) and str(doc.doc_metadata.get('priority')) == str(prio):
+                                    context_filter.docs_ids.append(doc.doc_id)
+                elif context_filter.docs_categories:
+                    ingested = self.list_ingested()
+                    for cat in context_filter.docs_categories:
+                        for doc in ingested:
+                            if str(doc.doc_metadata.get('category')) == str(cat):
+                                context_filter.docs_ids.append(doc.doc_id)
+                elif context_filter.docs_priorities:
+                    ingested = self.list_ingested()
+                    for prio in context_filter.docs_priorities:
+                        for doc in ingested:
+                            if str(doc.doc_metadata.get('priority')) == str(prio):
+                                context_filter.docs_ids.append(doc.doc_id)
+
+            
+            
             vector_index_retriever = self.vector_store_component.get_retriever(
                 index=self.index,
                 context_filter=context_filter,

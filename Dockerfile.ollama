@@ -10,6 +10,7 @@ ENV PATH=".venv/bin/:$PATH"
 
 RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install\
     libgl1\
+    make\
     libgl1-mesa-glx \ 
     libglib2.0-0 -y && \
     rm -rf /var/lib/apt/lists/*
@@ -55,6 +56,7 @@ COPY --chown=worker --from=dependencies /home/worker/app/.venv/ .venv
 COPY --chown=worker private_gpt/ private_gpt
 COPY --chown=worker *.yaml .
 COPY --chown=worker scripts/ scripts
+COPY --chown=worker Makefile .
+COPY pyproject.toml poetry.lock ./
 
-
-ENTRYPOINT python -m private_gpt
+ENTRYPOINT make ${RUN_MODE}

@@ -77,6 +77,24 @@ class IngestionHelper:
         for document in documents:
             document.metadata.update(file_metadata or {})
             document.metadata["file_name"] = file_name
+            directories = str(file_data).split("/")
+            category = ""
+            if "Lux" in directories:
+                category = "lux"
+            else:
+                category = "other"
+            
+            priority = ""  
+            if "high" in directories:
+                priority = "high"
+            elif "middle" in directories:
+                priority = "middle"
+            else:
+                priority = "low"
+            
+            document.metadata["path"] = str(file_data)
+            document.metadata["category"] = category
+            document.metadata["priority"] = priority
 
         IngestionHelper._exclude_metadata(documents)
         return documents
@@ -86,6 +104,9 @@ class IngestionHelper:
         logger.debug("Transforming file_name=%s into documents", file_name)
         extension = Path(file_name).suffix
         reader_cls = FILE_READER_CLS.get(extension)
+        if "pdf" in extension:
+            reader_cls = FILE_READER_CLS.get(".pdf")
+            
         if reader_cls is None:
             logger.debug(
                 "No reader found for extension=%s, using default string reader",
@@ -104,6 +125,6 @@ class IngestionHelper:
         for document in documents:
             document.metadata["doc_id"] = document.doc_id
             # We don't want the Embeddings search to receive this metadata
-            document.excluded_embed_metadata_keys = ["doc_id"]
+            document.excluded_embed_metadata_keys = ["doc_id", "category", "priority", "path"]
             # We don't want the LLM to receive these metadata in the context
-            document.excluded_llm_metadata_keys = ["file_name", "doc_id", "page_label"]
+            document.excluded_llm_metadata_keys = ["file_name", "doc_id", "page_label", "category", "priority", "path"]

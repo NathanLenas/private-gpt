@@ -35,6 +35,9 @@ check:
 run:
 	poetry run python -m private_gpt
 
+wipeingestrun: wipe ingestdocbase run
+wiperun: wipe run
+
 dev-windows:
 	(set PGPT_PROFILES=local & poetry run python -m uvicorn private_gpt.main:app --reload --port 8001)
 
@@ -50,6 +53,9 @@ api-docs:
 
 ingest:
 	@poetry run python scripts/ingest_folder.py $(call args)
+
+ingestdocbase: 
+	@poetry run python scripts/ingest_folder.py ./corpus
 
 stats:
 	poetry run python scripts/utils.py stats

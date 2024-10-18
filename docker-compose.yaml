@@ -17,12 +17,13 @@ services:
       - "8001:8001"
     environment:
       PORT: 8001
+      RUN_MODE: ${RUN_MODE:-run}
       PGPT_PROFILES: docker
       PGPT_MODE: ollama
       PGPT_EMBED_MODE: ollama
       PGPT_OLLAMA_API_BASE: http://ollama:11434
+      PGPT_OLLAMA_EMBEDDING_API_BASE: http://ollama:11434
       HF_TOKEN: ${HF_TOKEN:-}
-      
       PGPT_OLLAMA_LLM_MODEL: ${PGPT_OLLAMA_LLM_MODEL:-llama3.1}
       PGPT_LLM_TOKENIZER: ${PGPT_LLM_TOKENIZER:-}
       PGPT_OLLAMA_EMBEDDING_MODEL: ${PGPT_OLLAMA_EMBEDDING_MODEL:-}
@@ -39,10 +40,13 @@ services:
       PGPT_RAG_RERANK: ${PGPT_RAG_RERANK:-}
       PGPT_RAG_RERANK_MODEL: ${PGPT_RAG_RERANK_MODEL:-}
       PGPT_RAG_RERANK_TOP_N: ${PGPT_RAG_RERANK_TOP_N:-}
-
-      
-      
-
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
 
     profiles:
       - ""
